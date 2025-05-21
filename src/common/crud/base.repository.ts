@@ -3,8 +3,9 @@ import { FindQueryDto } from '../dtos/find-query.dto';
 import { IFindQuery } from '../interfaces/find-query.interface';
 import { NotFoundException } from '@nestjs/common';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+import { IBaseRepository } from '../interfaces/base-repository.interface';
 
-export abstract class BaseRepository<T> {
+export abstract class BaseRepository<T> implements IBaseRepository<T> {
   constructor(private readonly baseRepository: Repository<T>) {}
 
   async create(data: T): Promise<T> {
