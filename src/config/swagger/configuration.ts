@@ -1,0 +1,6 @@
+const SWAGGER_API_ROOT = '/api_doc'
+const SWAGGER_API_NAME = 'Feedback System'
+const SWAGGER_API_DESCRIPTION = 'Feedback system API document'
+const SWAGGER_API_VERSION = '3.1.1'
+
+export { SWAGGER_API_DESCRIPTION, SWAGGER_API_NAME, SWAGGER_API_ROOT, SWAGGER_API_VERSION, }
