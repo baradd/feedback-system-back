@@ -6,9 +6,10 @@ import { DatabaseConfigModule } from './config/database/database-config.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DatabaseConfigService } from './config/database/database-config.service';
 import { DatabaseModule } from './config/database/database.module';
+import { UserModule } from './modules/user/user.module';
 
 @Module({
-  imports: [AppConfigModule, DatabaseModule],
+  imports: [AppConfigModule, DatabaseModule, UserModule],
   controllers: [AppController],
   providers: [AppService],
 })

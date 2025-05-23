@@ -13,7 +13,8 @@ import { DatabaseConfigService } from "./database-config.service";
             port: dbConfig.port,
             username: dbConfig.username,
             password: dbConfig.password,
-            synchronize: dbConfig.synchronize
+            synchronize: dbConfig.synchronize,
+            logging: true
         })
     })],
 })

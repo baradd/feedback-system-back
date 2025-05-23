@@ -28,17 +28,14 @@ export class FindQueryDto {
 
   @IsOptional()
   @IsString()
-  search?: string;
-
-  @IsOptional()
-  @IsArray()
-  sortBy?: string;
+  search?: string[];
 
   @IsOptional()
   @IsString()
-  relations?: string;
+  sort?: string[];
 
   @IsOptional()
-  @IsEnum(SortOrder)
-  order?: SortOrder = SortOrder.DESC;
+  @IsString()
+  relations?: string[];
+
 }
