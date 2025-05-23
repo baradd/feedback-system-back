@@ -16,7 +16,6 @@ import { DatabaseConfigService } from './config/database/database-config.service
       port: dbConfig.port,
       username: dbConfig.username,
       password: dbConfig.password,
-
     })
   })],
   controllers: [AppController],
