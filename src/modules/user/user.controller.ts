@@ -1,9 +1,19 @@
-import { Body, Controller, Delete, Param, Post, Put, Get, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Param,
+  Post,
+  Put,
+  Get,
+  Query,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { FindQueryDto } from 'src/common/dtos/find-query.dto';
 import { FindQuery } from 'src/common/decorators/find-query.decorator';
 import { IFindQuery } from 'src/common/interfaces/find-query.interface';
 import { UserModel } from './models/user.model';
+import { CreateUserDto } from './dtos/create-user.dto';
 
 @Controller('user')
 export class UserController {
@@ -13,7 +23,7 @@ export class UserController {
 
   // Create a new user
   @Post()
-  create(@Body() createUserDto: any) {
+  create(@Body() createUserDto: CreateUserDto) {
     return this.userService.create(createUserDto);
   }
 
@@ -22,10 +32,12 @@ export class UserController {
   findAll(
     @Query() findQueryDto: FindQueryDto,
     @FindQuery({
-      search: [],
+      filters: [],
       sort: [],
       relations: [],
-    }) findQuery: IFindQuery<UserModel>) {
+    })
+    findQuery: IFindQuery<UserModel>,
+  ) {
     return this.userService.find(findQuery);
   }
 
@@ -46,6 +58,4 @@ export class UserController {
   remove(@Param('id') id: string) {
     return this.userService.deleteById(id);
   }
-
 }
-

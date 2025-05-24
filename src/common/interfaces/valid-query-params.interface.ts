@@ -1,5 +1,5 @@
 export interface IValidParams {
-    search?: string[],
-    sort?: string[],
-    relations?: string[]
+  filters?: string[];
+  sort?: string[];
+  relations?: string[];
 }

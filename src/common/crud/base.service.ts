@@ -6,12 +6,14 @@ import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity
 export abstract class BaseService<T> {
   constructor(protected readonly repository: IBaseRepository<T>) {}
 
-  async create(data: T): Promise<T> {
+  async create(data: any): Promise<T> {
     return this.repository.create(data);
   }
 
-  async find(findQuery: IFindQuery<T>): Promise<T[]> {
-    return this.repository.find(findQuery);
+  async find(findQuery: IFindQuery<T>): Promise<{ data: T[]; count: number }> {
+    let data = await this.repository.find(findQuery);
+    const count = await this.repository.count(findQuery);
+    return { data, count };
   }
 
   async findById(id: string): Promise<T> {
