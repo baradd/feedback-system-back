@@ -14,12 +14,13 @@ export abstract class BaseRepository<T> implements IBaseRepository<T> {
   }
 
   async find(findQuery: IFindQuery<T>): Promise<T[]> {
-    const { page, limit, search, relations, order } = findQuery;
+    const { page, limit, search, relations, order, select } = findQuery;
 
     const entities = this.baseRepository.find({
       where: search,
       relations,
       order,
+      select,
       skip: page * limit,
       take: limit,
     });
