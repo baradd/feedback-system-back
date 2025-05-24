@@ -43,4 +43,9 @@ export class FindQueryDto {
   @IsOptional()
   @IsString()
   relations?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  select?: string;
 }

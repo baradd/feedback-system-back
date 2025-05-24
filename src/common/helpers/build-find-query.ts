@@ -49,7 +49,7 @@ export default function buildFindQuery<T>(
   queryDto: FindQueryDto,
   validParams: IValidParams,
 ): IFindQuery<T> {
-  let { search, sort, relations } = queryDto;
+  let { search, sort, relations, select } = queryDto;
 
   const {
     filters: validFilterParams,
@@ -104,6 +104,7 @@ export default function buildFindQuery<T>(
 
     // extract the property name and direction and check if they are valid
     const [property, direction] = sort.split('::');
+
     if (!validSortParams.includes(property) && validFilterParams.length > 0)
       throw new BadRequestException(`Invalid sort property: ${property}`);
 
@@ -122,6 +123,11 @@ export default function buildFindQuery<T>(
     });
 
     parsedQueryFilter.relations = getRelations(relationKeys);
+  }
+
+  if (select) {
+    const selectKeys = select.split(',');
+    parsedQueryFilter.select = getSelect(selectKeys);
   }
   parsedQueryFilter.page = queryDto.page;
   parsedQueryFilter.limit = queryDto.limit;
@@ -282,5 +288,12 @@ export const getRelations = (relations: string[]) => {
   return relations.reduce((acc, r) => {
     if (!r) return acc;
     return iterativeDeepMerge(acc, createNestedStructure({ [r]: true }));
+  }, {});
+};
+
+export const getSelect = (select: string[]) => {
+  return select.reduce((acc, s) => {
+    if (!s) return acc;
+    return iterativeDeepMerge(acc, createNestedStructure({ [s]: true }));
   }, {});
 };
