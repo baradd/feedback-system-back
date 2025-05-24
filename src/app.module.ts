@@ -7,10 +7,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { DatabaseConfigService } from './config/database/database-config.service';
 import { DatabaseModule } from './config/database/database.module';
 import { UserModule } from './modules/user/user.module';
+import { CustomCacheModule } from './common/cache/cache.module';
 
 @Module({
-  imports: [AppConfigModule, DatabaseModule, UserModule],
+  imports: [AppConfigModule, DatabaseModule, UserModule, CustomCacheModule],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}
