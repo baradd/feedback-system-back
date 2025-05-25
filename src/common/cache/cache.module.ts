@@ -10,7 +10,7 @@ import * as redisStore from 'cache-manager-ioredis';
       imports: [RedisConfigModule],
       inject: [RedisConfigService],
       useFactory: (config: RedisConfigService) => ({
-        stores: [redisStore],
+        store: [redisStore],
         host: config.host,
         port: config.port,
         ttl: config.ttl,
@@ -19,4 +19,4 @@ import * as redisStore from 'cache-manager-ioredis';
     }),
   ],
 })
-export class CustomCacheModule {}
+export class CustomCacheModule { }
