@@ -14,8 +14,10 @@ import { FindQuery } from 'src/common/decorators/find-query.decorator';
 import { IFindQuery } from 'src/common/interfaces/find-query.interface';
 import { UserModel } from './models/user.model';
 import { CreateUserDto } from './dtos/create-user.dto';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('user')
+@ApiBearerAuth('token')
 export class UserController {
   constructor(private readonly userService: UserService) {
     // Constructor logic here
