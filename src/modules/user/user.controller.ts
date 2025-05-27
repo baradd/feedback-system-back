@@ -9,9 +9,9 @@ import {
   Query,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { FindQueryDto } from 'src/common/dtos/find-query.dto';
-import { FindQuery } from 'src/common/decorators/find-query.decorator';
-import { IFindQuery } from 'src/common/interfaces/find-query.interface';
+import { FindQueryDto } from 'src/common/dtos/find-query-request.dto';
+import { FindQueryRequest } from 'src/common/decorators/find-query.decorator';
+import { FindQuery } from 'src/common/dtos/find-query.interface';
 import { UserModel } from './models/user.model';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { ApiBearerAuth } from '@nestjs/swagger';
@@ -33,12 +33,12 @@ export class UserController {
   @Get()
   findAll(
     @Query() findQueryDto: FindQueryDto,
-    @FindQuery({
+    @FindQueryRequest({
       filters: [],
       sort: [],
       relations: [],
     })
-    findQuery: IFindQuery<UserModel>,
+    findQuery: FindQuery<UserModel>,
   ) {
     return this.userService.find(findQuery);
   }

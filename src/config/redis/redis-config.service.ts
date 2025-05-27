@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class RedisConfigService {
-  constructor(private readonly configService: ConfigService) { }
+  constructor(private readonly configService: ConfigService) {}
 
   get host(): string {
     return this.configService.get<string>('REDIS_HOST');
@@ -14,7 +14,7 @@ export class RedisConfigService {
   }
 
   get password(): string {
-    return this.configService.get<string>('REDIS_PORT') || '';
+    return this.configService.get<string>('REDIS_PASSWORD') || '';
   }
 
   get db(): number {

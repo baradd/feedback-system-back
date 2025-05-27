@@ -7,10 +7,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { DatabaseConfigService } from './config/database/database-config.service';
 import { DatabaseModule } from './config/database/database.module';
 import { UserModule } from './modules/user/user.module';
-import { CustomCacheModule } from './common/cache/cache.module';
+import { AuthenticationModule } from './modules/iam/authentication.module';
 
 @Module({
-  imports: [AppConfigModule, DatabaseModule, UserModule, CustomCacheModule],
+  imports: [AppConfigModule, DatabaseModule, UserModule, AuthenticationModule],
   controllers: [AppController],
   providers: [AppService],
 })

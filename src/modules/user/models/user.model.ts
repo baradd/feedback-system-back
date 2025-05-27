@@ -1,7 +1,12 @@
 import { BaseModel } from 'src/common/crud/base.model';
 import { Column, DeleteDateColumn, Entity } from 'typeorm';
 
-@Entity()
+@Entity({
+  name: 'users',
+  orderBy: {
+    createdAt: 'DESC',
+  },
+})
 class UserModel extends BaseModel {
   @Column({ type: String, nullable: false })
   firstname: string;
@@ -11,9 +16,6 @@ class UserModel extends BaseModel {
 
   @Column({ type: String, nullable: true })
   email?: string;
-
-  @Column({ type: String, nullable: false })
-  username: string;
 
   @Column({ type: String, nullable: true })
   phone: string;

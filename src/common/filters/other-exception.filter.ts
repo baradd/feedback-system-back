@@ -10,6 +10,8 @@ import { Request, Response } from 'express';
 @Catch()
 export class OtherExceptionsFilter implements ExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost) {
+    console.warn('Unhandled exception:', exception);
+
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();

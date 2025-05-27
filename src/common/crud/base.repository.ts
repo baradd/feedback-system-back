@@ -1,6 +1,6 @@
 import { DeepPartial, FindOptionsWhere, Repository } from 'typeorm';
-import { FindQueryDto } from '../dtos/find-query.dto';
-import { IFindQuery } from '../interfaces/find-query.interface';
+import { FindQueryDto } from '../dtos/find-query-request.dto';
+import { FindQuery } from '../dtos/find-query.interface';
 import { NotFoundException } from '@nestjs/common';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { IBaseRepository } from '../interfaces/base-repository.interface';
@@ -13,7 +13,7 @@ export abstract class BaseRepository<T> implements IBaseRepository<T> {
     return this.baseRepository.save(entity);
   }
 
-  async find(findQuery: IFindQuery<T>): Promise<T[]> {
+  async find(findQuery: FindQuery<T>): Promise<T[]> {
     const { page, limit, search, relations, order, select } = findQuery;
 
     const entities = this.baseRepository.find({
@@ -108,7 +108,7 @@ export abstract class BaseRepository<T> implements IBaseRepository<T> {
     return { deletedCount: entities.length };
   }
 
-  async count(findQuery: IFindQuery<T>): Promise<number> {
+  async count(findQuery: FindQuery<T>): Promise<number> {
     const { search } = findQuery;
     return this.baseRepository.count({ where: search });
   }

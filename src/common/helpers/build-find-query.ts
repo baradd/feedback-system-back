@@ -1,6 +1,6 @@
 import { BadRequestException } from '@nestjs/common';
-import { FindQueryDto } from '../dtos/find-query.dto';
-import { IFindQuery } from '../interfaces/find-query.interface';
+import { FindQueryDto } from '../dtos/find-query-request.dto';
+import { FindQuery } from '../dtos/find-query.interface';
 import { IValidParams } from '../interfaces/valid-query-params.interface';
 import {
   Between,
@@ -48,7 +48,7 @@ export interface Sorting {
 export default function buildFindQuery<T>(
   queryDto: FindQueryDto,
   validParams: IValidParams,
-): IFindQuery<T> {
+): FindQuery<T> {
   let { search, sort, relations, select } = queryDto;
 
   const {
@@ -56,7 +56,10 @@ export default function buildFindQuery<T>(
     sort: validSortParams,
     relations: validRelations,
   } = validParams;
-  let parsedQueryFilter: IFindQuery<T> = {};
+  let parsedQueryFilter: FindQuery<T> = {
+    page: 0,
+    limit: 0,
+  };
   if (search) {
     // check if the valid params sent is an array
     if (typeof validFilterParams != 'object')

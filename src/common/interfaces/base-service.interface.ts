@@ -1,13 +1,13 @@
-import { IFindQuery } from '../interfaces/find-query.interface';
+import { FindQuery } from '../dtos/find-query.interface';
 import { DeepPartial, FindOptionsWhere } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 export interface IBaseService<T> {
   create(data: T): Promise<T>;
 
-  find(findQuery: IFindQuery<T>): Promise<T[]>;
+  find(findQuery: FindQuery<T>): Promise<T[]>;
   findById(id: string): Promise<T>;
-  count(findQuery: IFindQuery<T>): Promise<number>;
+  count(findQuery: FindQuery<T>): Promise<number>;
 
   updateById(id: string, data: DeepPartial<T>): Promise<T>;
   updateOne(where: FindOptionsWhere<T>, data: DeepPartial<T>): Promise<T>;
