@@ -7,6 +7,7 @@ export interface IBaseRepository<T> {
 
   find(findQuery: FindQuery<T>): Promise<T[]>;
   findById(id: string): Promise<T>;
+  findOne(where: FindOptionsWhere<T>): Promise<T>;
   count(findQuery: FindQuery<T>): Promise<number>;
 
   updateById(id: string, data: DeepPartial<T>): Promise<T>;

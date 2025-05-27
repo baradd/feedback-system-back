@@ -16,6 +16,10 @@ export abstract class BaseService<T> {
     return { data, count };
   }
 
+  async findOne(where: FindOptionsWhere<T>): Promise<T> {
+    return await this.repository.findOne(where);
+  }
+
   async findById(id: string): Promise<T> {
     return this.repository.findById(id);
   }

@@ -10,6 +10,8 @@ import { QueryFailedError } from 'typeorm';
 @Catch(QueryFailedError)
 export class MariaExceptionFilter implements ExceptionFilter {
   catch(exception: QueryFailedError, host: ArgumentsHost) {
+    console.log('MariaExceptionFilter caught an exception:', exception);
+
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();

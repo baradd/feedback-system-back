@@ -27,6 +27,10 @@ export abstract class BaseRepository<T> implements IBaseRepository<T> {
     return entities;
   }
 
+  async findOne(where: FindOptionsWhere<T>): Promise<T> {
+    return this.baseRepository.findOne({ where });
+  }
+
   async findById(id: string): Promise<T> {
     const entity = this.baseRepository.findOneBy({ id } as any);
     if (!entity) {

@@ -11,6 +11,7 @@ import { IActiveUserData } from 'src/common/interfaces/active-user-data';
 import { CacheService } from '../cache/cache.service';
 import { RedisPrefixes } from 'src/common/enums/app.enum';
 import { RegisterDto } from './dtos/register.dto';
+import { LoginDto } from './dtos/login.dto';
 
 export class AuthenticationService {
   constructor(
@@ -25,13 +26,11 @@ export class AuthenticationService {
   async register(registerDto: RegisterDto): Promise<UserModel> {
     const { firstname, lastname, email, password } = registerDto;
 
-    const userExists = await this.userService.find({
-      search: { email },
-      limit: 1,
-      page: 0,
+    const userExists = await this.userService.findOne({
+      email,
     });
 
-    if (userExists.data.length > 0) {
+    if (userExists) {
       throw new BadRequestException('User with this email already exists');
     }
 
@@ -44,6 +43,27 @@ export class AuthenticationService {
     });
 
     return { ...user, password: undefined } as UserModel;
+  }
+
+  async login(
+    loginDto: LoginDto,
+  ): Promise<{ token: string; refreshToken: string }> {
+    const { email, password } = loginDto;
+    const user = await this.userService.findOne({ email });
+
+    if (!user) {
+      throw new BadRequestException('Invalid username or password');
+    }
+
+    const isPasswordValid = this.bcryptService.compare(password, user.password);
+    if (!isPasswordValid) {
+      throw new BadRequestException('Invalid username or password');
+    }
+
+    const { id, firstname, lastname } = user;
+    const tokens = await this.generateTokens({ id, firstname, lastname });
+
+    return tokens;
   }
 
   async generateTokens(
@@ -91,5 +111,17 @@ export class AuthenticationService {
         audience: this.jwtConfiguration.audience,
       },
     );
+  }
+
+  async refreshTokens(refreshToken: string) {
+    try {
+      const { id, refreshTokenId } = await this.jwtService.verifyAsync<
+        Pick<IActiveUserData, 'id'> & { refreshTokenId: string }
+      >(refreshToken, {
+        audience: this.jwtConfiguration.audience,
+        secret: this.jwtConfiguration.secret,
+        issuer: this.jwtConfiguration.issuer,
+      });
+    } catch (error) {}
   }
 }
