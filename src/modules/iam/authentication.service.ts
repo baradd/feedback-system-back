@@ -122,6 +122,9 @@ export class AuthenticationService {
         secret: this.jwtConfiguration.secret,
         issuer: this.jwtConfiguration.issuer,
       });
-    } catch (error) {}
+      console.log(id, refreshTokenId);
+    } catch (error) {
+      console.log(error);
+    }
   }
 }

@@ -5,6 +5,7 @@ import { RegisterDto } from './dtos/register.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { LoginDto } from './dtos/login.dto';
 import { Request } from 'express';
+import { RefreshTokenDto } from './dtos/refresh-token.dto';
 
 @Controller('auth')
 export class AuthenticationController {
@@ -21,5 +22,10 @@ export class AuthenticationController {
     @Req() req: Request,
   ): Promise<{ token: string; refreshToken: string }> {
     return this.authenticationService.login(loginDto);
+  }
+
+  @Post('refresh-tokens')
+  async refreshTokens(@Body() body: RefreshTokenDto) {
+    return this.authenticationService.refreshTokens(body.refreshToken);
   }
 }
