@@ -6,16 +6,19 @@ import { ApiTags } from '@nestjs/swagger';
 import { LoginDto } from './dtos/login.dto';
 import { Request } from 'express';
 import { RefreshTokenDto } from './dtos/refresh-token.dto';
+import { SkipAuth } from 'src/common/decorators/skip-auth.guard';
 
 @Controller('auth')
 export class AuthenticationController {
-  constructor(private readonly authenticationService: AuthenticationService) {}
+  constructor(private readonly authenticationService: AuthenticationService) { }
 
+  @SkipAuth()
   @Post('register')
   async register(@Body() registerDto: RegisterDto): Promise<UserModel> {
     return this.authenticationService.register(registerDto);
   }
 
+  @SkipAuth()
   @Post('login')
   async login(
     @Body() loginDto: LoginDto,
@@ -24,6 +27,7 @@ export class AuthenticationController {
     return this.authenticationService.login(loginDto);
   }
 
+  @SkipAuth()
   @Post('refresh-tokens')
   async refreshTokens(@Body() body: RefreshTokenDto) {
     return this.authenticationService.refreshTokens(body.refreshToken);

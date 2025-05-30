@@ -2,7 +2,7 @@ import { DeepPartial } from 'typeorm';
 import { UserModel } from '../user/models/user.model';
 import { BCryptService } from 'src/common/providers/bcrypt.service';
 import { JwtService } from '@nestjs/jwt';
-import { BadRequestException, Inject } from '@nestjs/common';
+import { BadRequestException, Inject, UnauthorizedException } from '@nestjs/common';
 import jwtConfig from './auth/config/jwt.config';
 import { ConfigType } from '@nestjs/config';
 import { UserService } from '../user/user.service';
@@ -12,6 +12,7 @@ import { CacheService } from '../cache/cache.service';
 import { RedisPrefixes } from 'src/common/enums/app.enum';
 import { RegisterDto } from './dtos/register.dto';
 import { LoginDto } from './dtos/login.dto';
+import { RefreshTokenDto } from './dtos/refresh-token.dto';
 
 export class AuthenticationService {
   constructor(
@@ -21,7 +22,7 @@ export class AuthenticationService {
     private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
     private readonly userService: UserService,
     private readonly cacheService: CacheService,
-  ) {}
+  ) { }
 
   async register(registerDto: RegisterDto): Promise<UserModel> {
     const { firstname, lastname, email, password } = registerDto;
@@ -70,25 +71,27 @@ export class AuthenticationService {
     user: DeepPartial<UserModel>,
   ): Promise<{ token: string; refreshToken: string }> {
     const refreshTokenId = randomUUID();
+    const tokenId = randomUUID()
+    const newUser = { ...user, tokenId }
     const [token, refreshToken] = await Promise.all([
       this.signToken<IActiveUserData>(
         user.id,
         this.jwtConfiguration.accessTokenExpireIn,
-        user as IActiveUserData,
+        newUser as IActiveUserData,
       ),
-      this.signToken<string>(
+      this.signToken<{ refreshTokenId: string }>(
         user.id,
         this.jwtConfiguration.refreshTokenExpireIn,
-        refreshTokenId,
+        { refreshTokenId },
       ),
     ]);
 
-    await this.cacheService.sadd(RedisPrefixes.TOKEN, user.id, token);
+    await this.cacheService.sadd(RedisPrefixes.TOKEN, user.id, tokenId);
 
     await this.cacheService.sadd(
       RedisPrefixes.REFRESH_TOKEN,
       user.id,
-      refreshToken,
+      refreshTokenId,
     );
 
     return { token, refreshToken };
@@ -122,9 +125,30 @@ export class AuthenticationService {
         secret: this.jwtConfiguration.secret,
         issuer: this.jwtConfiguration.issuer,
       });
-      console.log(id, refreshTokenId);
+
+      const userRefreshTokenSet = await this.cacheService.smembers(RedisPrefixes.REFRESH_TOKEN, id)
+
+      if (!userRefreshTokenSet.includes(refreshTokenId)) {
+        throw new UnauthorizedException("Unauthorized");
+      }
+
+      const user = await this.userService.findById(id)
+      const { id: userId, firstname, lastname } = user
+      await this.invalidateTokens(RedisPrefixes.REFRESH_TOKEN, id, refreshTokenId)
+
+      const tokens = await this.generateTokens({ id: userId, firstname, lastname })
+
+      return tokens
+
     } catch (error) {
-      console.log(error);
+      throw error
     }
   }
+
+  async invalidateTokens(prefix: string, key: string, value: string): Promise<void> {
+    console.log('invalidating', prefix, key, value);
+
+    await this.cacheService.srem(prefix, key, value)
+  }
+
 }

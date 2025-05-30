@@ -7,6 +7,8 @@ import jwtConfig from './auth/config/jwt.config';
 import { ConfigModule } from '@nestjs/config';
 import { CacheModule } from '../cache/cache.module';
 import { AuthenticationController } from './authentication.controller';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthGuard } from './auth/guards/auth.guard';
 
 @Module({
   imports: [
@@ -16,7 +18,7 @@ import { AuthenticationController } from './authentication.controller';
     CacheModule,
   ],
   controllers: [AuthenticationController],
-  providers: [BCryptService, AuthenticationService],
+  providers: [BCryptService, AuthenticationService, { provide: APP_GUARD, useClass: AuthGuard }, AuthGuard],
   exports: [],
 })
-export class AuthenticationModule {}
+export class AuthenticationModule { }
