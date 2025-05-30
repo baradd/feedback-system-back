@@ -72,7 +72,7 @@ export class AuthenticationService {
   ): Promise<{ token: string; refreshToken: string }> {
     const refreshTokenId = randomUUID();
     const tokenId = randomUUID()
-    const newUser = { ...user, tokenId }
+    const newUser = { ...user, tokenId, refreshTokenId }
     const [token, refreshToken] = await Promise.all([
       this.signToken<IActiveUserData>(
         user.id,
@@ -151,4 +151,8 @@ export class AuthenticationService {
     await this.cacheService.srem(prefix, key, value)
   }
 
+  async logout(activeUser: IActiveUserData): Promise<void> {
+    await this.cacheService.srem(RedisPrefixes.TOKEN, activeUser.id, activeUser.tokenId);
+    await this.cacheService.srem(RedisPrefixes.REFRESH_TOKEN, activeUser.id, activeUser.refreshTokenId);
+  }
 }

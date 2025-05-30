@@ -15,6 +15,8 @@ import { FindQuery } from 'src/common/dtos/find-query.interface';
 import { UserModel } from './models/user.model';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { ApiBearerAuth } from '@nestjs/swagger';
+import { ActiveUser } from 'src/common/decorators/active-user.decorator';
+import { IActiveUserData } from 'src/common/interfaces/active-user-data';
 
 @Controller('user')
 @ApiBearerAuth('token')
@@ -41,6 +43,11 @@ export class UserController {
     findQuery: FindQuery<UserModel>,
   ) {
     return this.userService.find(findQuery);
+  }
+
+  @Get('active')
+  getActiveUsers(@ActiveUser() activeUser: IActiveUserData) {
+    return activeUser;
   }
 
   // Get user by ID

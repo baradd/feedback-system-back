@@ -8,7 +8,7 @@ import { IActiveUserData } from "src/common/interfaces/active-user-data";
 import { CacheService } from "src/modules/cache/cache.service";
 import { RedisPrefixes } from "src/common/enums/app.enum";
 import { Reflector } from "@nestjs/core";
-import { IS_PUBLIC_KEY } from "src/common/decorators/skip-auth.guard";
+import { IS_PUBLIC_KEY } from "src/common/guards/skip-auth.guard";
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -44,6 +44,8 @@ export class AuthGuard implements CanActivate {
             }
             request['user'] = payload
         } catch (error) {
+            console.log(error);
+
             await this.cacheService.srem(RedisPrefixes.TOKEN, payload.id, payload.tokenId)
             throw new UnauthorizedException('Unauthorized')
         }
