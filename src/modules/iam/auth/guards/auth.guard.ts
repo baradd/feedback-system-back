@@ -46,7 +46,9 @@ export class AuthGuard implements CanActivate {
         } catch (error) {
             console.log(error);
 
-            await this.cacheService.srem(RedisPrefixes.TOKEN, payload.id, payload.tokenId)
+            if (payload) {
+                await this.cacheService.srem(RedisPrefixes.TOKEN, payload.id, payload.tokenId)
+            }
             throw new UnauthorizedException('Unauthorized')
         }
 
