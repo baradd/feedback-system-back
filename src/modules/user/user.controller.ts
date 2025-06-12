@@ -7,6 +7,9 @@ import {
   Put,
   Get,
   Query,
+  UseInterceptors,
+  UploadedFile,
+  Req,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { FindQueryDto } from 'src/common/dtos/find-query-request.dto';
@@ -14,9 +17,11 @@ import { FindQueryRequest } from 'src/common/decorators/find-query.decorator';
 import { FindQuery } from 'src/common/dtos/find-query.interface';
 import { UserModel } from './models/user.model';
 import { CreateUserDto } from './dtos/create-user.dto';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiConsumes } from '@nestjs/swagger';
 import { ActiveUser } from 'src/common/decorators/active-user.decorator';
 import { IActiveUserData } from 'src/common/interfaces/active-user-data';
+import { AvatarUploadInterceptor } from './interceptors/avatar-upload.interceptor';
+import { UpdateUserDto } from './dtos/update-user.dto';
 
 @Controller('user')
 @ApiBearerAuth('token')
@@ -58,7 +63,10 @@ export class UserController {
 
   // Update user by ID
   @Put(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: any) {
+  @UseInterceptors(AvatarUploadInterceptor)
+  @ApiConsumes('multipart/form-data')
+  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto, @UploadedFile('file') file: any) {
+    return
     return this.userService.updateById(id, updateUserDto);
   }
 

@@ -24,7 +24,7 @@ class UserModel extends BaseModel {
   password: string;
 
   @Column({ type: String, nullable: true })
-  image: string;
+  avatar: string;
 
   @Column({ type: Boolean, nullable: false, default: true })
   isActive: boolean;
