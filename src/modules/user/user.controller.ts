@@ -61,25 +61,33 @@ export class UserController {
     return this.userService.findById(id);
   }
 
-  // Update user by ID
-  @Put(':id')
+  @Put('avatar')
   @UseInterceptors(AvatarUploadInterceptor)
   @ApiBody({
     schema: {
       type: 'object',
+      required: ['avatar'],
       properties: {
         avatar: {
           type: 'string',
-          format: 'binary'
+          format: 'binary',
         },
       },
     },
   })
   @ApiConsumes('multipart/form-data')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto, @UploadedFile('file') file: any) {
-    console.log(file);
+  async updateAvatar(
+    @UploadedFile('file') file: any,
+    @ActiveUser() activeUser: IActiveUserData,
+  ) {
+    return this.userService.updateById(activeUser.id, {
+      avatar: file?.filename,
+    });
+  }
 
-    return
+  // Update user by ID
+  @Put(':id')
+  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.userService.updateById(id, updateUserDto);
   }
 

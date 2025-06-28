@@ -2,7 +2,11 @@ import { DeepPartial } from 'typeorm';
 import { UserModel } from '../user/models/user.model';
 import { BCryptService } from 'src/common/providers/bcrypt.service';
 import { JwtService } from '@nestjs/jwt';
-import { BadRequestException, Inject, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  UnauthorizedException,
+} from '@nestjs/common';
 import jwtConfig from './auth/config/jwt.config';
 import { ConfigType } from '@nestjs/config';
 import { UserService } from '../user/user.service';
@@ -22,7 +26,7 @@ export class AuthenticationService {
     private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
     private readonly userService: UserService,
     private readonly cacheService: CacheService,
-  ) { }
+  ) {}
 
   async register(registerDto: RegisterDto): Promise<UserModel> {
     const { firstname, lastname, email, password } = registerDto;
@@ -71,8 +75,8 @@ export class AuthenticationService {
     user: DeepPartial<UserModel>,
   ): Promise<{ token: string; refreshToken: string }> {
     const refreshTokenId = randomUUID();
-    const tokenId = randomUUID()
-    const newUser = { ...user, tokenId, refreshTokenId }
+    const tokenId = randomUUID();
+    const newUser = { ...user, tokenId, refreshTokenId };
     const [token, refreshToken] = await Promise.all([
       this.signToken<IActiveUserData>(
         user.id,
@@ -126,33 +130,55 @@ export class AuthenticationService {
         issuer: this.jwtConfiguration.issuer,
       });
 
-      const userRefreshTokenSet = await this.cacheService.smembers(RedisPrefixes.REFRESH_TOKEN, id)
+      const userRefreshTokenSet = await this.cacheService.smembers(
+        RedisPrefixes.REFRESH_TOKEN,
+        id,
+      );
 
       if (!userRefreshTokenSet.includes(refreshTokenId)) {
-        throw new UnauthorizedException("Unauthorized");
+        throw new UnauthorizedException('Unauthorized');
       }
 
-      const user = await this.userService.findById(id)
-      const { id: userId, firstname, lastname } = user
-      await this.invalidateTokens(RedisPrefixes.REFRESH_TOKEN, id, refreshTokenId)
+      const user = await this.userService.findById(id);
+      const { id: userId, firstname, lastname } = user;
+      await this.invalidateTokens(
+        RedisPrefixes.REFRESH_TOKEN,
+        id,
+        refreshTokenId,
+      );
 
-      const tokens = await this.generateTokens({ id: userId, firstname, lastname })
+      const tokens = await this.generateTokens({
+        id: userId,
+        firstname,
+        lastname,
+      });
 
-      return tokens
-
+      return tokens;
     } catch (error) {
-      throw error
+      throw error;
     }
   }
 
-  async invalidateTokens(prefix: string, key: string, value: string): Promise<void> {
+  async invalidateTokens(
+    prefix: string,
+    key: string,
+    value: string,
+  ): Promise<void> {
     console.log('invalidating', prefix, key, value);
 
-    await this.cacheService.srem(prefix, key, value)
+    await this.cacheService.srem(prefix, key, value);
   }
 
   async logout(activeUser: IActiveUserData): Promise<void> {
-    await this.cacheService.srem(RedisPrefixes.TOKEN, activeUser.id, activeUser.tokenId);
-    await this.cacheService.srem(RedisPrefixes.REFRESH_TOKEN, activeUser.id, activeUser.refreshTokenId);
+    await this.cacheService.srem(
+      RedisPrefixes.TOKEN,
+      activeUser.id,
+      activeUser.tokenId,
+    );
+    await this.cacheService.srem(
+      RedisPrefixes.REFRESH_TOKEN,
+      activeUser.id,
+      activeUser.refreshTokenId,
+    );
   }
 }

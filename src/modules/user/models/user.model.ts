@@ -1,3 +1,4 @@
+import { Exclude } from 'class-transformer';
 import { BaseModel } from 'src/common/crud/base.model';
 import { Column, DeleteDateColumn, Entity } from 'typeorm';
 
@@ -20,7 +21,7 @@ class UserModel extends BaseModel {
   @Column({ type: String, nullable: true })
   phone: string;
 
-  @Column({ type: String, nullable: false })
+  @Column({ type: String, nullable: false, select: false })
   password: string;
 
   @Column({ type: String, nullable: true })
