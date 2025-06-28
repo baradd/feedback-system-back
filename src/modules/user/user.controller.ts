@@ -64,8 +64,21 @@ export class UserController {
   // Update user by ID
   @Put(':id')
   @UseInterceptors(AvatarUploadInterceptor)
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        avatar: {
+          type: 'string',
+          format: 'binary'
+        },
+      },
+    },
+  })
   @ApiConsumes('multipart/form-data')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto, @UploadedFile('file') file: any) {
+    console.log(file);
+
     return
     return this.userService.updateById(id, updateUserDto);
   }
