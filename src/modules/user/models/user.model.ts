@@ -19,13 +19,13 @@ class UserModel extends BaseModel {
   email?: string;
 
   @Column({ type: String, nullable: true })
-  phone: string;
+  phone?: string;
 
-  @Column({ type: String, nullable: false, select: false })
+  @Column({ type: String, nullable: false })
   password: string;
 
   @Column({ type: String, nullable: true })
-  avatar: string;
+  avatar?: string;
 
   @Column({ type: Boolean, nullable: false, default: true })
   isActive: boolean;

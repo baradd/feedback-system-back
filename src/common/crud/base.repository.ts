@@ -45,6 +45,7 @@ export abstract class BaseRepository<T> implements IBaseRepository<T> {
       throw new NotFoundException(`Entity with id ${id} not found`);
     }
     const updatedEntity = this.baseRepository.merge(entity, data);
+    await this.baseRepository.save(updatedEntity);
     return updatedEntity;
   }
 

@@ -6,6 +6,12 @@
     "deleteOutDir": true,
     "plugins": [
       "@nestjs/swagger"
+    ],
+    "assets": [
+      {
+        "include": "public/**/*",
+        "watchAssets": true
+      }
     ]
   }
 }

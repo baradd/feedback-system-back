@@ -80,7 +80,7 @@ export class UserController {
     @UploadedFile('file') file: any,
     @ActiveUser() activeUser: IActiveUserData,
   ) {
-    return this.userService.updateById(activeUser.id, {
+    return await this.userService.updateById(activeUser.id, {
       avatar: file?.filename,
     });
   }
