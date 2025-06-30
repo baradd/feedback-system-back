@@ -11,7 +11,8 @@ import { join } from 'path';
 @Module({
   imports: [
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, 'public'),
+      rootPath: join(__dirname, '..', 'public'),
+      serveRoot: '/static',
     }),
     AppConfigModule,
     DatabaseModule,
@@ -21,8 +22,4 @@ import { join } from 'path';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {
-  constructor() {
-    console.log(__dirname);
-  }
-}
+export class AppModule {}
