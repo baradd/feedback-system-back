@@ -17,6 +17,8 @@ import { MULTER_MODULE_OPTIONS } from '@nestjs/platform-express/multer/files.con
 import * as multer from 'multer';
 import { diskStorage } from 'multer';
 import { join } from 'path';
+import * as sharp from 'sharp';
+import { unlinkSync, renameSync, unlink } from 'fs';
 
 @Injectable()
 export class AvatarUploadInterceptor implements NestInterceptor {
@@ -57,6 +59,20 @@ export class AvatarUploadInterceptor implements NestInterceptor {
         return resolve();
       });
     });
+
+    if (req.file && req.file.path) {
+      const resizedPath = req.file.path.replace(/(\.\w+)$/, '_resized$1');
+
+      await sharp(req.file.path)
+        .resize(256, 256, { fit: 'cover' })
+        .toFile(resizedPath);
+
+      // remove original File
+
+      unlinkSync(req.file.path);
+      renameSync(resizedPath, req.file.path);
+    }
+
     return next.handle();
   }
 }
