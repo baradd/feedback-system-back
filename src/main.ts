@@ -11,6 +11,7 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  app.enableCors(); // Enable CORS
 
   app.useBodyParser('json', { limit: '100mb' });
   app.useBodyParser('urlencoded', { limit: '100mb', extended: true });
